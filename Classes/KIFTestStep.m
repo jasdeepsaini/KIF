@@ -721,16 +721,16 @@ typedef CGPoint KIFDisplacement;
         
         KIFDisplacement swipeDisplacement = [self _displacementForSwipingInDirection:direction withMajorDisplacement:displacement];
         
-        CGPoint swipePath[NUM_POINTS_IN_SWIPE_PATH];
+        CGPoint swipePath[pointsCount];
         
         for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
         {
-            CGFloat swipeProgress = ((CGFloat)pointIndex)/(NUM_POINTS_IN_SWIPE_PATH - 1);
+            CGFloat swipeProgress = ((CGFloat)pointIndex)/(pointsCount - 1);
             swipePath[pointIndex] = CGPointMake(swipeStart.x + (swipeProgress * swipeDisplacement.x),
                                                 swipeStart.y + (swipeProgress * swipeDisplacement.y));
         }
         
-        [viewToSwipe dragAlongPathWithPoints:swipePath count:NUM_POINTS_IN_SWIPE_PATH];
+        [viewToSwipe dragAlongPathWithPoints:swipePath count:pointsCount];
         
         return KIFTestStepResultSuccess;
     }];
@@ -1099,7 +1099,7 @@ typedef CGPoint KIFDisplacement;
             return CGPointMake(displacement, MINOR_SWIPE_DISPLACEMENT);
             break;
         case KIFSwipeDirectionLeft:
-            return CGPointMake(--displacement, MINOR_SWIPE_DISPLACEMENT);
+            return CGPointMake(-displacement, MINOR_SWIPE_DISPLACEMENT);
             break;
         case KIFSwipeDirectionUp:
             return CGPointMake(MINOR_SWIPE_DISPLACEMENT, -displacement);

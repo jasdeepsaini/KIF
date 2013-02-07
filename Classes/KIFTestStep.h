@@ -483,7 +483,7 @@ typedef enum {
 /*!
  @method stepToSwipeViewWithAccessibilityLabel:inDirection:
  @abstract A step that swipes a particular view in the view hierarchy in the given direction.
- @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction from the view's center.
+ @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction.
  @param label The accessibility label of the view to swipe.
  @param direction The direction in which to swipe.
  @result A configured test step.
@@ -552,7 +552,7 @@ typedef enum {
 /*!
  @method stepToSwipeViewWithAccessibilityLabel:inDirection:pointsCount:withDisplacement
  @abstract A step that swipes a particular view in the view hierarchy in the given direction.
- @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction from the view's center.
+ @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction.
  @param label The accessibility label of the view to swipe.
  @param direction The direction in which to swipe.
  @param pointsCount The number of points which will be used to create the path for a swipe.
