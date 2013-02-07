@@ -677,6 +677,8 @@ typedef CGPoint KIFDisplacement;
 }
 
 #define NUM_POINTS_IN_SWIPE_PATH 20
+#define MAJOR_SWIPE_DISPLACEMENT 200
+#define MINOR_SWIPE_DISPLACEMENT 5
 
 + (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label
                                 inDirection:(KIFSwipeDirection)direction
@@ -735,7 +737,10 @@ typedef CGPoint KIFDisplacement;
 }
 
 + (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label inDirection:(KIFSwipeDirection)direction {
-    return [KIFTestStep stepToSwipeViewWithAccessibilityLabel:label inDirection:direct pointsCount:NUM_POINTS_IN_SWIPE_PATH displacement:MAJOR_SWIPE_DISPLACEMENT];
+    return [KIFTestStep stepToSwipeViewWithAccessibilityLabel:label
+                                                  inDirection:direction
+                                                  pointsCount:NUM_POINTS_IN_SWIPE_PATH
+                                             withDisplacement:MAJOR_SWIPE_DISPLACEMENT];
 }
 
 #define NUM_POINTS_IN_SCROLL_PATH 5
@@ -1079,12 +1084,9 @@ typedef CGPoint KIFDisplacement;
                       }];
 }
 
-#define MAJOR_SWIPE_DISPLACEMENT 200
-#define MINOR_SWIPE_DISPLACEMENT 5
-
 + (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction
 {
-    return [KIFDisplacement _displacementForSwipingInDirection:direction withMajorDisplacement:MAJOR_SWIPE_DISPLACEMENT];
+    return [KIFTestStep _displacementForSwipingInDirection:direction withMajorDisplacement:MAJOR_SWIPE_DISPLACEMENT];
 }
 
 + (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction withMajorDisplacement:(NSInteger)displacement {

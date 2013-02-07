@@ -20,4 +20,7 @@
 - (UIWindow *)keyboardWindow;
 - (UIWindow *)pickerViewWindow;
 
+#pragma mark - Added by Jasdeep Saini
+- (UIWindow *)alertViewWindow;
+
 @end
