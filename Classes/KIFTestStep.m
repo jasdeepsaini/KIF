@@ -1041,6 +1041,37 @@ typedef CGPoint KIFDisplacement;
     return element;
 }
 
++ (id)stepToDismissAlertViewWithButtonTitle:(NSString *)title {
+    return [self stepWithDescription:[NSString stringWithFormat:@"Dismiss the alert with button titled: %@", title]
+                      executionBlock:^(KIFTestStep *step, NSError **error) {
+                          
+                          const NSTimeInterval tapDelay = 0.05;
+                          NSArray *windows = [[UIApplication sharedApplication] windows];
+                          KIFTestCondition(windows.count, error, @"Failed to find any windows in the application");
+                          
+                          UIWindow *alertViewWindow = [[UIApplication sharedApplication] alertViewWindow];
+                          
+                          if (alertViewWindow) {
+                              NSArray *alertViews = [alertViewWindow subviewsWithClassNameOrSuperClassNamePrefix:@"UIAlertView"];
+                              
+                              if ([alertViews count] > 0) {
+                                  UIView *alertView = [alertViews objectAtIndex:0];
+                                  
+                                  for (id subview in alertView.subviews) {
+                                      if ([NSStringFromClass([subview class]) isEqualToString:@"UIAlertButton"]) {
+                                          if ([subview respondsToSelector:@selector(title)] && [[subview title] isEqualToString:title]) {
+                                              [subview tapAtPoint:CGPointMake(5, 5)];
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          
+                          CFRunLoopRunInMode(kCFRunLoopDefaultMode, tapDelay, false);
+                          return KIFTestStepResultSuccess;
+                      }];
+}
+
 #define MAJOR_SWIPE_DISPLACEMENT 200
 #define MINOR_SWIPE_DISPLACEMENT 5
 

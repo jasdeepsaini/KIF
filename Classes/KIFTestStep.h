@@ -538,4 +538,14 @@ typedef enum {
  */
 + (KIFTestStep *)stepToWaitForDeviceOrientation:(UIDeviceOrientation)newOrientation;
 
+/*!
+ @method stepToDismissAlertViewWithButtonTitle:
+ @abstract A step that dismisses an UIAlertView.
+ @discussion The UIAlertView contains one or more UIAlertButton instances that represent the buttons. The UIAlertButton class has a 'title' property which is the button's title.
+ @param title The title of the button in the UIAlertView to tap
+ @result A configured test step.
+ @note This is based on: https://github.com/square/KIF/pull/52
+ */
++ (id)stepToDismissAlertViewWithButtonTitle:(NSString *)title;
+
 @end
