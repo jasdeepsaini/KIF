@@ -538,6 +538,7 @@ typedef enum {
  */
 + (KIFTestStep *)stepToWaitForDeviceOrientation:(UIDeviceOrientation)newOrientation;
 
+#pragma mark - Methods added by Jasdeep Saini
 /*!
  @method stepToDismissAlertViewWithButtonTitle:
  @abstract A step that dismisses an UIAlertView.
@@ -547,5 +548,20 @@ typedef enum {
  @note This is based on: https://github.com/square/KIF/pull/52
  */
 + (id)stepToDismissAlertViewWithButtonTitle:(NSString *)title;
+
+/*!
+ @method stepToSwipeViewWithAccessibilityLabel:inDirection:pointsCount:withDisplacement
+ @abstract A step that swipes a particular view in the view hierarchy in the given direction.
+ @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction from the view's center.
+ @param label The accessibility label of the view to swipe.
+ @param direction The direction in which to swipe.
+ @param pointsCount The number of points which will be used to create the path for a swipe.
+ @param withDisplacement What is the difference between the start point and end point of the swipe.
+ @result A configured test step.
+ */
++ (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label
+                                inDirection:(KIFSwipeDirection)direction
+                                pointsCount:(NSInteger)pointsCount
+                           withDisplacement:(NSInteger)displacement;
 
 @end

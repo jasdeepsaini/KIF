@@ -38,6 +38,7 @@ static NSTimeInterval KIFTestStepDefaultTimeout = 10.0;
 
 typedef CGPoint KIFDisplacement;
 + (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction;
++ (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction withMajorDisplacement:(NSInteger)displacement;
 
 @end
 
@@ -677,11 +678,13 @@ typedef CGPoint KIFDisplacement;
 
 #define NUM_POINTS_IN_SWIPE_PATH 20
 
-+ (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label inDirection:(KIFSwipeDirection)direction
-{
++ (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label
+                                inDirection:(KIFSwipeDirection)direction
+                                pointsCount:(NSInteger)pointsCount
+                           withDisplacement:(NSInteger)displacement {
     // The original version of this came from http://groups.google.com/group/kif-framework/browse_thread/thread/df3f47eff9f5ac8c
     NSString *directionDescription = nil;
-
+    
     switch(direction)
     {
         case KIFSwipeDirectionRight:
@@ -697,38 +700,42 @@ typedef CGPoint KIFDisplacement;
             directionDescription = @"down";
             break;
     }
-
+    
     NSString *description = [NSString stringWithFormat:@"Step to swipe %@ on view with accessibility label %@", directionDescription, label];
     return [KIFTestStep stepWithDescription:description executionBlock:^(KIFTestStep *step, NSError **error) {
         UIAccessibilityElement *element = [self _accessibilityElementWithLabel:label accessibilityValue:nil tappable:NO traits:UIAccessibilityTraitNone error:error];
         if (!element) {
             return KIFTestStepResultWait;
         }
-
+        
         UIView *viewToSwipe = [UIAccessibilityElement viewContainingAccessibilityElement:element];
         KIFTestWaitCondition(viewToSwipe, error, @"Cannot find view with accessibility label \"%@\"", label);
-
+        
         // Within this method, all geometry is done in the coordinate system of
         // the view to swipe.
-
+        
         CGRect elementFrame = [viewToSwipe.window convertRect:element.accessibilityFrame toView:viewToSwipe];
         CGPoint swipeStart = CGPointCenteredInRect(elementFrame);
-
-        KIFDisplacement swipeDisplacement = [self _displacementForSwipingInDirection:direction];
-
+        
+        KIFDisplacement swipeDisplacement = [self _displacementForSwipingInDirection:direction withMajorDisplacement:displacement];
+        
         CGPoint swipePath[NUM_POINTS_IN_SWIPE_PATH];
-
-        for (int pointIndex = 0; pointIndex < NUM_POINTS_IN_SWIPE_PATH; pointIndex++)
+        
+        for (int pointIndex = 0; pointIndex < pointsCount; pointIndex++)
         {
             CGFloat swipeProgress = ((CGFloat)pointIndex)/(NUM_POINTS_IN_SWIPE_PATH - 1);
             swipePath[pointIndex] = CGPointMake(swipeStart.x + (swipeProgress * swipeDisplacement.x),
                                                 swipeStart.y + (swipeProgress * swipeDisplacement.y));
         }
-
+        
         [viewToSwipe dragAlongPathWithPoints:swipePath count:NUM_POINTS_IN_SWIPE_PATH];
-
+        
         return KIFTestStepResultSuccess;
     }];
+}
+
++ (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label inDirection:(KIFSwipeDirection)direction {
+    return [KIFTestStep stepToSwipeViewWithAccessibilityLabel:label inDirection:direct pointsCount:NUM_POINTS_IN_SWIPE_PATH displacement:MAJOR_SWIPE_DISPLACEMENT];
 }
 
 #define NUM_POINTS_IN_SCROLL_PATH 5
@@ -1077,22 +1084,26 @@ typedef CGPoint KIFDisplacement;
 
 + (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction
 {
+    return [KIFDisplacement _displacementForSwipingInDirection:direction withMajorDisplacement:MAJOR_SWIPE_DISPLACEMENT];
+}
+
++ (KIFDisplacement)_displacementForSwipingInDirection:(KIFSwipeDirection)direction withMajorDisplacement:(NSInteger)displacement {
     switch (direction)
     {
-        // As discovered on the Frank mailing lists, it won't register as a
-        // swipe if you move purely horizontally or vertically, so need a
-        // slight orthogonal offset too.
+            // As discovered on the Frank mailing lists, it won't register as a
+            // swipe if you move purely horizontally or vertically, so need a
+            // slight orthogonal offset too.
         case KIFSwipeDirectionRight:
-            return CGPointMake(MAJOR_SWIPE_DISPLACEMENT, MINOR_SWIPE_DISPLACEMENT);
+            return CGPointMake(displacement, MINOR_SWIPE_DISPLACEMENT);
             break;
         case KIFSwipeDirectionLeft:
-            return CGPointMake(-MAJOR_SWIPE_DISPLACEMENT, MINOR_SWIPE_DISPLACEMENT);
+            return CGPointMake(--displacement, MINOR_SWIPE_DISPLACEMENT);
             break;
         case KIFSwipeDirectionUp:
-            return CGPointMake(MINOR_SWIPE_DISPLACEMENT, -MAJOR_SWIPE_DISPLACEMENT);
+            return CGPointMake(MINOR_SWIPE_DISPLACEMENT, -displacement);
             break;
         case KIFSwipeDirectionDown:
-            return CGPointMake(MINOR_SWIPE_DISPLACEMENT, MAJOR_SWIPE_DISPLACEMENT);
+            return CGPointMake(MINOR_SWIPE_DISPLACEMENT, displacement);
             break;
         default:
             return CGPointZero;
